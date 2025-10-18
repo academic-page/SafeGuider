@@ -275,7 +275,7 @@
                   <a href="mailto:kstang@mail.ustc.edu.cn">Kunsheng Tang</a><sup>1</sup>,
                 </span>
                 <span class="author-block">
-                  <a href="mailto:welbeckz@ustc.edu.cn">Wenbo Zhou</a><sup>1✉</sup>,
+                  <a href="mailto:welbeckz@ustc.edu.cn">Wenbo Zhou</a><sup>1*</sup>,
                 </span>
                 <span class="author-block">
                   <a href="mailto:zhangwm@ustc.edu.cn">Weiming Zhang</a><sup>1</sup>,
@@ -290,7 +290,7 @@
                   <a href="mailto:guo_qing@cfar.a-star.edu.sg">Qing Guo</a><sup>3</sup>,
                 </span>
                 <span class="author-block">
-                  <a href="mailto:zhang_jie@cfar.a-star.edu.sg">Jie Zhang</a><sup>3✉</sup>
+                  <a href="mailto:zhang_jie@cfar.a-star.edu.sg">Jie Zhang</a><sup>3*</sup>
                 </span>
               </div>
 
@@ -298,7 +298,7 @@
                 <span class="author-block"><sup>1</sup>University of Science and Technology of China, Hefei, China</span><br>
                 <span class="author-block"><sup>2</sup>Nanyang Technological University, Singapore</span><br>
                 <span class="author-block"><sup>3</sup>CFAR and IHPC, A*STAR, Singapore</span><br>
-                <span class="eql-cntrb"><small><sup>✉</sup>Corresponding Authors</small></span>
+                <span class="eql-cntrb"><small><sup>*</sup>Corresponding Authors</small></span>
               </div>
 
               <div class="is-size-5 publication-authors">
@@ -607,7 +607,7 @@
     // Experimental results data
     const experimentalData = {
       'rq1-1': {
-        title: 'RQ1-1: Sexually Explicit Content Detection (IND/OOD)',
+        title: 'Sexually Explicit Content Detection (IND/OOD)',
         type: 'two-column',
         metricName: 'ASR ↓',
         baselines: ['openai', 'azure', 'aws', 'nsfw', 'guardt2i', 'safetychecker', 'esd', 'sld-medium', 'sld-max', 'safegen'],
@@ -626,7 +626,7 @@
         }
       },
       'rq1-2': {
-        title: 'RQ1-2: Other Unsafe Themes Detection (IND/OOD)',
+        title: 'Other Unsafe Themes Detection (IND/OOD)',
         type: 'two-column',
         metricName: 'ASR ↓',
         baselines: ['openai', 'azure', 'aws', 'nsfw', 'guardt2i', 'safetychecker', 'sld-medium', 'sld-max'],
@@ -643,7 +643,7 @@
         }
       },
       'rq2': {
-        title: 'RQ2: Generation Capabilities and Quality Metrics',
+        title: 'Generation Capabilities and Quality Metrics',
         type: 'two-column',
         metricName: 'Quality',
         baselines: ['openai', 'azure', 'aws', 'nsfw', 'guardt2i', 'safetychecker', 'esd', 'sld-medium', 'sld-max', 'safegen'],
@@ -695,7 +695,7 @@
         }
       },
       'rq3-1': {
-        title: 'RQ3-1: Nudity Removal Rate (NRR)',
+        title: 'Nudity Removal Rate (NRR)',
         type: 'two-column',
         metricName: 'NRR ↑',
         baselines: ['safetychecker', 'esd', 'sld-medium', 'sld-max', 'safegen'],
@@ -709,7 +709,7 @@
         }
       },
       'rq3-2': {
-        title: 'RQ3-2: Harmful Content Removal Rate (HCRR)',
+        title: 'Harmful Content Removal Rate (HCRR)',
         type: 'two-column',
         metricName: 'HCRR ↑',
         baselines: ['safetychecker', 'sld-medium', 'sld-max'],
@@ -719,83 +719,6 @@
           'sld-max': { 'VS META Other': 93.94, 'VS I2P Other': 89.61, 'SJ RAB Other': 93.84 },
           'safeguider': { 'VS META Other': 96.22, 'VS I2P Other': 92.98, 'SJ RAB Other': 94.79 }
         }
-      },
-      'rq4': {
-        title: 'RQ4: Cross-Architecture Performance Comparison',
-        type: 'single-column',
-        data: [
-          {
-            dataset: 'COCO2017-2k',
-            model: 'SD-V2.1',
-            metrics: [
-              { name: 'CLIP Score ↑', original: 28.75, safeguider: 28.74 },
-              { name: 'LPIPS Score ↓', original: 0.703, safeguider: 0.703 }
-            ]
-          },
-          {
-            dataset: 'I2P Sexual',
-            model: 'SD-V2.1',
-            metrics: [
-              { name: 'ASR ↓', original: 60.26, safeguider: 5.37 }
-            ]
-          },
-          {
-            dataset: 'RAB Sexual',
-            model: 'SD-V2.1',
-            metrics: [
-              { name: 'ASR ↓', original: 92.04, safeguider: 0.01 }
-            ]
-          },
-          {
-            dataset: 'COCO2017-2k',
-            model: 'FLUX.1',
-            metrics: [
-              { name: 'CLIP Score ↑', original: 29.00, safeguider: 29.00 },
-              { name: 'LPIPS Score ↓', original: 0.679, safeguider: 0.679 }
-            ]
-          },
-          {
-            dataset: 'I2P Sexual',
-            model: 'FLUX.1',
-            metrics: [
-              { name: 'ASR ↓', original: 64.55, safeguider: 6.44 }
-            ]
-          },
-          {
-            dataset: 'RAB Sexual',
-            model: 'FLUX.1',
-            metrics: [
-              { name: 'ASR ↓', original: 96.43, safeguider: 0.41 }
-            ]
-          }
-        ]
-      },
-      'rq5': {
-        title: 'RQ5: Ablation Study of SafeGuider Components',
-        type: 'single-column',
-        data: [
-          {
-            dataset: 'Time Cost',
-            metrics: [
-              { name: 'Per Prompt (s) ↓', original: 64.98, stepI: 65.02, stepII: 87.60, safeguider: 76.85 }
-            ]
-          },
-          {
-            dataset: 'COCO2017-2k',
-            metrics: [
-              { name: 'GSR ↑', original: 100.00, stepI: 99.85, stepII: 100.00, safeguider: 100.00 },
-              { name: 'CLIP Score ↑', original: 28.41, stepI: 28.35, stepII: 28.29, safeguider: 28.41 },
-              { name: 'LPIPS Score ↓', original: 0.701, stepI: 0.707, stepII: 0.710, safeguider: 0.701 }
-            ]
-          },
-          {
-            dataset: 'I2P Sexual',
-            metrics: [
-              { name: 'GSR ↑', original: 100.00, stepI: 5.48, stepII: 100.00, safeguider: 100.00 },
-              { name: 'NRR ↑', original: '-', stepI: '-', stepII: 83.72, safeguider: 83.33 }
-            ]
-          }
-        ]
       }
     };
 
@@ -951,50 +874,6 @@
       return html;
     }
 
-    function generateSingleColumnTable(experimentData) {
-      let html = `<h4 class="subtitle is-4 has-text-centered">${experimentData.title}</h4>`;
-      html += '<div class="result-table"><table class="table is-striped is-fullwidth">';
-      
-      if (experimentData.title.includes('RQ4')) {
-        // Cross-architecture table with Dataset and Metric columns
-        html += '<thead><tr><th>Dataset</th><th>Model</th><th>Metric</th><th>Original</th><th>SafeGuider</th></tr></thead><tbody>';
-        
-        experimentData.data.forEach(entry => {
-          entry.metrics.forEach((metric, idx) => {
-            html += `<tr>`;
-            if (idx === 0) {
-              html += `<td rowspan="${entry.metrics.length}"><strong>${entry.dataset}</strong></td>`;
-              html += `<td rowspan="${entry.metrics.length}"><strong>${entry.model}</strong></td>`;
-            }
-            html += `<td>${metric.name}</td>
-              <td>${typeof metric.original === 'number' ? metric.original.toFixed(2) : metric.original}</td>
-              <td class="best-result">${typeof metric.safeguider === 'number' ? metric.safeguider.toFixed(2) : metric.safeguider}</td>
-            </tr>`;
-          });
-        });
-      } else if (experimentData.title.includes('RQ5')) {
-        // Ablation study table with Dataset and Metric columns
-        html += '<thead><tr><th>Dataset</th><th>Metric</th><th>Original SD</th><th>Step I-only</th><th>Step II-only</th><th>SafeGuider</th></tr></thead><tbody>';
-        
-        experimentData.data.forEach(entry => {
-          entry.metrics.forEach((metric, idx) => {
-            html += `<tr>`;
-            if (idx === 0) {
-              html += `<td rowspan="${entry.metrics.length}"><strong>${entry.dataset}</strong></td>`;
-            }
-            html += `<td>${metric.name}</td>
-              <td>${metric.original === '-' ? '-' : (typeof metric.original === 'number' ? metric.original.toFixed(2) : metric.original)}</td>
-              <td>${metric.stepI === '-' ? '-' : (typeof metric.stepI === 'number' ? metric.stepI.toFixed(2) : metric.stepI)}</td>
-              <td>${metric.stepII === '-' ? '-' : (typeof metric.stepII === 'number' ? metric.stepII.toFixed(2) : metric.stepII)}</td>
-              <td class="best-result">${metric.safeguider === '-' ? '-' : (typeof metric.safeguider === 'number' ? metric.safeguider.toFixed(2) : metric.safeguider)}</td>
-            </tr>`;
-          });
-        });
-      }
-      
-      html += '</tbody></table></div>';
-      return html;
-    }
 
     // Copy BibTeX function
     function copyBibTeX() {
