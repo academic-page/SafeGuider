@@ -275,7 +275,7 @@
                   <a href="mailto:kstang@mail.ustc.edu.cn">Kunsheng Tang</a><sup>1</sup>,
                 </span>
                 <span class="author-block">
-                  <a href="mailto:welbeckz@ustc.edu.cn">Wenbo Zhou</a><sup>1</sup>,
+                  <a href="mailto:welbeckz@ustc.edu.cn">Wenbo Zhou</a><sup>1*</sup>,
                 </span>
                 <span class="author-block">
                   <a href="mailto:zhangwm@ustc.edu.cn">Weiming Zhang</a><sup>1</sup>,
@@ -479,11 +479,13 @@
         
         <div class="tabs is-centered is-boxed" id="experiment-tabs">
           <ul>
-            <li class="is-active" data-tab="rq1-1"><a>Sexually Explicit (IND/OOD)</a></li>
-            <li data-tab="rq1-2"><a>Other Unsafe (IND/OOD)</a></li>
-            <li data-tab="rq2"><a>Generation Quality</a></li>
-            <li data-tab="rq3-1"><a>Nudity Removal</a></li>
-            <li data-tab="rq3-2"><a>Harmful Content Removal</a></li>
+            <li class="is-active" data-tab="rq1-1"><a>RQ1-1: Sexually Explicit (IND/OOD)</a></li>
+            <li data-tab="rq1-2"><a>RQ1-2: Other Unsafe (IND/OOD)</a></li>
+            <li data-tab="rq2"><a>RQ2: Generation Quality</a></li>
+            <li data-tab="rq3-1"><a>RQ3-1: Nudity Removal</a></li>
+            <li data-tab="rq3-2"><a>RQ3-2: Harmful Content Removal</a></li>
+            <li data-tab="rq4"><a>RQ4: Cross-Architecture</a></li>
+            <li data-tab="rq5"><a>RQ5: Ablation Study</a></li>
           </ul>
         </div>
 
@@ -518,6 +520,16 @@
           </div>
         </div>
 
+        <!-- Single-column layout for RQ4 and RQ5 -->
+        <div class="single-column-container" id="single-column-results" style="display: none;">
+          <div class="result-display" id="single-results">
+            <div class="loading-spinner active">
+              <div class="spinner"></div>
+              <p>Select an experiment to load results...</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Visual Examples -->
@@ -708,6 +720,83 @@
           'safeguider': { 'VS META Other': 96.22, 'VS I2P Other': 92.98, 'SJ RAB Other': 94.79 }
         }
       },
+      'rq4': {
+        title: 'RQ4: Cross-Architecture Performance Comparison',
+        type: 'single-column',
+        data: [
+          {
+            dataset: 'COCO2017-2k',
+            model: 'SD-V2.1',
+            metrics: [
+              { name: 'CLIP Score ↑', original: 28.75, safeguider: 28.74 },
+              { name: 'LPIPS Score ↓', original: 0.703, safeguider: 0.703 }
+            ]
+          },
+          {
+            dataset: 'I2P Sexual',
+            model: 'SD-V2.1',
+            metrics: [
+              { name: 'ASR ↓', original: 60.26, safeguider: 5.37 }
+            ]
+          },
+          {
+            dataset: 'RAB Sexual',
+            model: 'SD-V2.1',
+            metrics: [
+              { name: 'ASR ↓', original: 92.04, safeguider: 0.01 }
+            ]
+          },
+          {
+            dataset: 'COCO2017-2k',
+            model: 'FLUX.1',
+            metrics: [
+              { name: 'CLIP Score ↑', original: 29.00, safeguider: 29.00 },
+              { name: 'LPIPS Score ↓', original: 0.679, safeguider: 0.679 }
+            ]
+          },
+          {
+            dataset: 'I2P Sexual',
+            model: 'FLUX.1',
+            metrics: [
+              { name: 'ASR ↓', original: 64.55, safeguider: 6.44 }
+            ]
+          },
+          {
+            dataset: 'RAB Sexual',
+            model: 'FLUX.1',
+            metrics: [
+              { name: 'ASR ↓', original: 96.43, safeguider: 0.41 }
+            ]
+          }
+        ]
+      },
+      'rq5': {
+        title: 'RQ5: Ablation Study of SafeGuider Components',
+        type: 'single-column',
+        data: [
+          {
+            dataset: 'Time Cost',
+            metrics: [
+              { name: 'Per Prompt (s) ↓', original: 64.98, stepI: 65.02, stepII: 87.60, safeguider: 76.85 }
+            ]
+          },
+          {
+            dataset: 'COCO2017-2k',
+            metrics: [
+              { name: 'GSR ↑', original: 100.00, stepI: 99.85, stepII: 100.00, safeguider: 100.00 },
+              { name: 'CLIP Score ↑', original: 28.41, stepI: 28.35, stepII: 28.29, safeguider: 28.41 },
+              { name: 'LPIPS Score ↓', original: 0.701, stepI: 0.707, stepII: 0.710, safeguider: 0.701 }
+            ]
+          },
+          {
+            dataset: 'I2P Sexual',
+            metrics: [
+              { name: 'GSR ↑', original: 100.00, stepI: 5.48, stepII: 100.00, safeguider: 100.00 },
+              { name: 'NRR ↑', original: '-', stepI: '-', stepII: 83.72, safeguider: 83.33 }
+            ]
+          }
+        ]
+      }
     };
 
     // Method name mapping
