@@ -275,7 +275,7 @@
                   <a href="mailto:kstang@mail.ustc.edu.cn">Kunsheng Tang</a><sup>1</sup>,
                 </span>
                 <span class="author-block">
-                  <a href="mailto:welbeckz@ustc.edu.cn">Wenbo Zhou</a><sup>1*</sup>,
+                  <a href="mailto:welbeckz@ustc.edu.cn">Wenbo Zhou</a><sup>1</sup>,
                 </span>
                 <span class="author-block">
                   <a href="mailto:zhangwm@ustc.edu.cn">Weiming Zhang</a><sup>1</sup>,
@@ -595,7 +595,7 @@
     // Experimental results data
     const experimentalData = {
       'rq1-1': {
-        title: 'Sexually Explicit Content Detection (IND/OOD)',
+        title: 'RQ1-1: Sexually Explicit Content Detection (IND/OOD)',
         type: 'two-column',
         metricName: 'ASR ↓',
         baselines: ['openai', 'azure', 'aws', 'nsfw', 'guardt2i', 'safetychecker', 'esd', 'sld-medium', 'sld-max', 'safegen'],
@@ -614,7 +614,7 @@
         }
       },
       'rq1-2': {
-        title: 'Other Unsafe Themes Detection (IND/OOD)',
+        title: 'RQ1-2: Other Unsafe Themes Detection (IND/OOD)',
         type: 'two-column',
         metricName: 'ASR ↓',
         baselines: ['openai', 'azure', 'aws', 'nsfw', 'guardt2i', 'safetychecker', 'sld-medium', 'sld-max'],
@@ -631,7 +631,7 @@
         }
       },
       'rq2': {
-        title: 'Generation Capabilities and Quality Metrics',
+        title: 'RQ2: Generation Capabilities and Quality Metrics',
         type: 'two-column',
         metricName: 'Quality',
         baselines: ['openai', 'azure', 'aws', 'nsfw', 'guardt2i', 'safetychecker', 'esd', 'sld-medium', 'sld-max', 'safegen'],
@@ -683,7 +683,7 @@
         }
       },
       'rq3-1': {
-        title: 'Nudity Removal Rate (NRR)',
+        title: 'RQ3-1: Nudity Removal Rate (NRR)',
         type: 'two-column',
         metricName: 'NRR ↑',
         baselines: ['safetychecker', 'esd', 'sld-medium', 'sld-max', 'safegen'],
@@ -697,7 +697,7 @@
         }
       },
       'rq3-2': {
-        title: 'Harmful Content Removal Rate (HCRR)',
+        title: 'RQ3-2: Harmful Content Removal Rate (HCRR)',
         type: 'two-column',
         metricName: 'HCRR ↑',
         baselines: ['safetychecker', 'sld-medium', 'sld-max'],
@@ -707,7 +707,7 @@
           'sld-max': { 'VS META Other': 93.94, 'VS I2P Other': 89.61, 'SJ RAB Other': 93.84 },
           'safeguider': { 'VS META Other': 96.22, 'VS I2P Other': 92.98, 'SJ RAB Other': 94.79 }
         }
-      }
+      },
     };
 
     // Method name mapping
@@ -862,6 +862,50 @@
       return html;
     }
 
+    function generateSingleColumnTable(experimentData) {
+      let html = `<h4 class="subtitle is-4 has-text-centered">${experimentData.title}</h4>`;
+      html += '<div class="result-table"><table class="table is-striped is-fullwidth">';
+      
+      if (experimentData.title.includes('RQ4')) {
+        // Cross-architecture table with Dataset and Metric columns
+        html += '<thead><tr><th>Dataset</th><th>Model</th><th>Metric</th><th>Original</th><th>SafeGuider</th></tr></thead><tbody>';
+        
+        experimentData.data.forEach(entry => {
+          entry.metrics.forEach((metric, idx) => {
+            html += `<tr>`;
+            if (idx === 0) {
+              html += `<td rowspan="${entry.metrics.length}"><strong>${entry.dataset}</strong></td>`;
+              html += `<td rowspan="${entry.metrics.length}"><strong>${entry.model}</strong></td>`;
+            }
+            html += `<td>${metric.name}</td>
+              <td>${typeof metric.original === 'number' ? metric.original.toFixed(2) : metric.original}</td>
+              <td class="best-result">${typeof metric.safeguider === 'number' ? metric.safeguider.toFixed(2) : metric.safeguider}</td>
+            </tr>`;
+          });
+        });
+      } else if (experimentData.title.includes('RQ5')) {
+        // Ablation study table with Dataset and Metric columns
+        html += '<thead><tr><th>Dataset</th><th>Metric</th><th>Original SD</th><th>Step I-only</th><th>Step II-only</th><th>SafeGuider</th></tr></thead><tbody>';
+        
+        experimentData.data.forEach(entry => {
+          entry.metrics.forEach((metric, idx) => {
+            html += `<tr>`;
+            if (idx === 0) {
+              html += `<td rowspan="${entry.metrics.length}"><strong>${entry.dataset}</strong></td>`;
+            }
+            html += `<td>${metric.name}</td>
+              <td>${metric.original === '-' ? '-' : (typeof metric.original === 'number' ? metric.original.toFixed(2) : metric.original)}</td>
+              <td>${metric.stepI === '-' ? '-' : (typeof metric.stepI === 'number' ? metric.stepI.toFixed(2) : metric.stepI)}</td>
+              <td>${metric.stepII === '-' ? '-' : (typeof metric.stepII === 'number' ? metric.stepII.toFixed(2) : metric.stepII)}</td>
+              <td class="best-result">${metric.safeguider === '-' ? '-' : (typeof metric.safeguider === 'number' ? metric.safeguider.toFixed(2) : metric.safeguider)}</td>
+            </tr>`;
+          });
+        });
+      }
+      
+      html += '</tbody></table></div>';
+      return html;
+    }
 
     // Copy BibTeX function
     function copyBibTeX() {
