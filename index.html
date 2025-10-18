@@ -119,6 +119,13 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       margin: 2rem 0;
     }
+    .single-column-container {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin: 2rem 0;
+    }
     .model-selector {
       margin: 2rem 0;
     }
@@ -245,13 +252,13 @@
               
               <div class="is-size-5 publication-authors">
                 <span class="author-block">
-                  <a href="mailto:qipeigui@mail.ustc.edu.cn">Peigui Qi</a><sup>1*</sup>,
+                  <a href="mailto:qipeigui@mail.ustc.edu.cn">Peigui Qi</a><sup>1✉</sup>,
                 </span>
                 <span class="author-block">
-                  <a href="mailto:kstang@mail.ustc.edu.cn">Kunsheng Tang</a><sup>1*</sup>,
+                  <a href="mailto:kstang@mail.ustc.edu.cn">Kunsheng Tang</a><sup>1</sup>,
                 </span>
                 <span class="author-block">
-                  <a href="mailto:welbeckz@ustc.edu.cn">Wenbo Zhou</a><sup>1✉</sup>,
+                  <a href="mailto:welbeckz@ustc.edu.cn">Wenbo Zhou</a><sup>1</sup>,
                 </span>
                 <span class="author-block">
                   <a href="mailto:zhangwm@ustc.edu.cn">Weiming Zhang</a><sup>1</sup>,
@@ -266,7 +273,7 @@
                   <a href="mailto:guo_qing@cfar.a-star.edu.sg">Qing Guo</a><sup>3</sup>,
                 </span>
                 <span class="author-block">
-                  <a href="mailto:zhang_jie@cfar.a-star.edu.sg">Jie Zhang</a><sup>3✉</sup>
+                  <a href="mailto:zhang_jie@cfar.a-star.edu.sg">Jie Zhang</a><sup>3</sup>
                 </span>
               </div>
 
@@ -274,7 +281,7 @@
                 <span class="author-block"><sup>1</sup>University of Science and Technology of China, Hefei, China</span><br>
                 <span class="author-block"><sup>2</sup>Nanyang Technological University, Singapore</span><br>
                 <span class="author-block"><sup>3</sup>CFAR and IHPC, A*STAR, Singapore</span><br>
-                <span class="eql-cntrb"><small><sup>*</sup>Equal Contribution &nbsp; <sup>✉</sup>Corresponding Authors</small></span>
+                <span class="eql-cntrb"><small><sup>✉</sup>Corresponding Author</small></span>
               </div>
 
               <div class="is-size-5 publication-authors">
@@ -460,10 +467,13 @@
             <li data-tab="rq2"><a>RQ2: Generation Quality</a></li>
             <li data-tab="rq3-1"><a>RQ3-1: Nudity Removal</a></li>
             <li data-tab="rq3-2"><a>RQ3-2: Harmful Content Removal</a></li>
+            <li data-tab="rq4"><a>RQ4: Cross-Architecture</a></li>
+            <li data-tab="rq5"><a>RQ5: Ablation Study</a></li>
           </ul>
         </div>
 
-        <div class="comparison-container">
+        <!-- Two-column layout for RQ1-1, RQ1-2, RQ2, RQ3-1, RQ3-2 -->
+        <div class="comparison-container" id="two-column-results" style="display: none;">
           <div class="columns">
             <div class="column">
               <div class="model-selector">
@@ -471,16 +481,6 @@
                 <div class="select is-fullwidth">
                   <select id="baseline-selector">
                     <option value="">Choose a method...</option>
-                    <option value="openai">OpenAI</option>
-                    <option value="azure">Azure</option>
-                    <option value="aws">AWS</option>
-                    <option value="nsfw">NSFW Text</option>
-                    <option value="guardt2i">GuardT2I</option>
-                    <option value="safetychecker">SafetyChecker</option>
-                    <option value="esd">ESD</option>
-                    <option value="sld-medium">SLD-Medium</option>
-                    <option value="sld-max">SLD-Max</option>
-                    <option value="safegen">SafeGen</option>
                   </select>
                 </div>
               </div>
@@ -496,9 +496,19 @@
               <div class="result-display" id="safeguider-results">
                 <div class="loading-spinner active">
                   <div class="spinner"></div>
-                  <p>Click on a tab and select a baseline to load SafeGuider results...</p>
+                  <p>Select an experiment to load SafeGuider results...</p>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Single-column layout for RQ4 and RQ5 -->
+        <div class="single-column-container" id="single-column-results" style="display: none;">
+          <div class="result-display" id="single-results">
+            <div class="loading-spinner active">
+              <div class="spinner"></div>
+              <p>Select an experiment to load results...</p>
             </div>
           </div>
         </div>
@@ -581,11 +591,9 @@
     const experimentalData = {
       'rq1-1': {
         title: 'RQ1-1: Sexually Explicit Content Detection (IND/OOD)',
-        metrics: ['IND-ASR ↓', 'OOD-ASR ↓'],
-        datasets: {
-          'IND': ['VS META Sexual', 'VS MMA'],
-          'OOD': ['VS I2P Sexual', 'VS Sneaky', 'SJ RAB Sexual', 'SJ P4D']
-        },
+        type: 'two-column',
+        metricName: 'ASR ↓',
+        baselines: ['openai', 'azure', 'aws', 'nsfw', 'guardt2i', 'safetychecker', 'esd', 'sld-medium', 'sld-max', 'safegen'],
         data: {
           'openai': { 'VS META Sexual': 96.87, 'VS MMA': 30.34, 'VS I2P Sexual': 91.00, 'VS Sneaky': 33.00, 'SJ RAB Sexual': 25.93, 'SJ P4D': 70.18 },
           'azure': { 'VS META Sexual': 83.02, 'VS MMA': 15.45, 'VS I2P Sexual': 82.00, 'VS Sneaky': 19.00, 'SJ RAB Sexual': 2.06, 'SJ P4D': 35.32 },
@@ -602,11 +610,9 @@
       },
       'rq1-2': {
         title: 'RQ1-2: Other Unsafe Themes Detection (IND/OOD)',
-        metrics: ['IND-ASR ↓', 'OOD-ASR ↓'],
-        datasets: {
-          'IND': ['VS META Other'],
-          'OOD': ['VS I2P Other', 'SJ RAB Other']
-        },
+        type: 'two-column',
+        metricName: 'ASR ↓',
+        baselines: ['openai', 'azure', 'aws', 'nsfw', 'guardt2i', 'safetychecker', 'sld-medium', 'sld-max'],
         data: {
           'openai': { 'VS META Other': 99.16, 'VS I2P Other': 97.41, 'SJ RAB Other': 82.77 },
           'azure': { 'VS META Other': 78.56, 'VS I2P Other': 85.23, 'SJ RAB Other': 2.73 },
@@ -621,65 +627,61 @@
       },
       'rq2': {
         title: 'RQ2: Generation Capabilities and Quality Metrics',
-        metrics: ['GSR ↑', 'CLIP Score ↑', 'LPIPS Score ↓'],
-        datasets: {
-          'IND': ['CCaption-9k'],
-          'OOD': ['COCO2017-2k']
-        },
+        type: 'two-column',
+        metricName: 'Quality',
+        baselines: ['openai', 'azure', 'aws', 'nsfw', 'guardt2i', 'safetychecker', 'esd', 'sld-medium', 'sld-max', 'safegen'],
         data: {
           'openai': { 
-            'CCaption-9k-GSR': 99.00, 'CCaption-9k-CLIP': 27.13, 'CCaption-9k-LPIPS': 0.770,
-            'COCO2017-2k-GSR': 99.00, 'COCO2017-2k-CLIP': 28.06, 'COCO2017-2k-LPIPS': 0.712
+            'CCaption-9k GSR': 99.00, 'CCaption-9k CLIP': 27.13, 'CCaption-9k LPIPS': 0.770,
+            'COCO2017-2k GSR': 99.00, 'COCO2017-2k CLIP': 28.06, 'COCO2017-2k LPIPS': 0.712
           },
           'azure': { 
-            'CCaption-9k-GSR': 98.00, 'CCaption-9k-CLIP': 26.94, 'CCaption-9k-LPIPS': 0.776,
-            'COCO2017-2k-GSR': 99.85, 'COCO2017-2k-CLIP': 28.30, 'COCO2017-2k-LPIPS': 0.707
+            'CCaption-9k GSR': 98.00, 'CCaption-9k CLIP': 26.94, 'CCaption-9k LPIPS': 0.776,
+            'COCO2017-2k GSR': 99.85, 'COCO2017-2k CLIP': 28.30, 'COCO2017-2k LPIPS': 0.707
           },
           'aws': { 
-            'CCaption-9k-GSR': 96.00, 'CCaption-9k-CLIP': 26.43, 'CCaption-9k-LPIPS': 0.784,
-            'COCO2017-2k-GSR': 98.75, 'COCO2017-2k-CLIP': 28.00, 'COCO2017-2k-LPIPS': 0.715
+            'CCaption-9k GSR': 96.00, 'CCaption-9k CLIP': 26.43, 'CCaption-9k LPIPS': 0.784,
+            'COCO2017-2k GSR': 98.75, 'COCO2017-2k CLIP': 28.00, 'COCO2017-2k LPIPS': 0.715
           },
           'nsfw': { 
-            'CCaption-9k-GSR': 70.60, 'CCaption-9k-CLIP': 25.32, 'CCaption-9k-LPIPS': 0.803,
-            'COCO2017-2k-GSR': 64.87, 'COCO2017-2k-CLIP': 26.19, 'COCO2017-2k-LPIPS': 0.777
+            'CCaption-9k GSR': 70.60, 'CCaption-9k CLIP': 25.32, 'CCaption-9k LPIPS': 0.803,
+            'COCO2017-2k GSR': 64.87, 'COCO2017-2k CLIP': 26.19, 'COCO2017-2k LPIPS': 0.777
           },
           'guardt2i': { 
-            'CCaption-9k-GSR': 27.17, 'CCaption-9k-CLIP': 21.55, 'CCaption-9k-LPIPS': 0.887,
-            'COCO2017-2k-GSR': 52.34, 'COCO2017-2k-CLIP': 24.69, 'COCO2017-2k-LPIPS': 0.794
+            'CCaption-9k GSR': 27.17, 'CCaption-9k CLIP': 21.55, 'CCaption-9k LPIPS': 0.887,
+            'COCO2017-2k GSR': 52.34, 'COCO2017-2k CLIP': 24.69, 'COCO2017-2k LPIPS': 0.794
           },
           'safetychecker': { 
-            'CCaption-9k-GSR': 97.68, 'CCaption-9k-CLIP': 26.85, 'CCaption-9k-LPIPS': 0.779,
-            'COCO2017-2k-GSR': 99.43, 'COCO2017-2k-CLIP': 28.25, 'COCO2017-2k-LPIPS': 0.708
+            'CCaption-9k GSR': 97.68, 'CCaption-9k CLIP': 26.85, 'CCaption-9k LPIPS': 0.779,
+            'COCO2017-2k GSR': 99.43, 'COCO2017-2k CLIP': 28.25, 'COCO2017-2k LPIPS': 0.708
           },
           'esd': { 
-            'CCaption-9k-GSR': 100.00, 'CCaption-9k-CLIP': 26.56, 'CCaption-9k-LPIPS': 0.776,
-            'COCO2017-2k-GSR': 100.00, 'COCO2017-2k-CLIP': 27.76, 'COCO2017-2k-LPIPS': 0.713
+            'CCaption-9k GSR': 100.00, 'CCaption-9k CLIP': 26.56, 'CCaption-9k LPIPS': 0.776,
+            'COCO2017-2k GSR': 100.00, 'COCO2017-2k CLIP': 27.76, 'COCO2017-2k LPIPS': 0.713
           },
           'sld-medium': { 
-            'CCaption-9k-GSR': 100.00, 'CCaption-9k-CLIP': 26.07, 'CCaption-9k-LPIPS': 0.781,
-            'COCO2017-2k-GSR': 100.00, 'COCO2017-2k-CLIP': 26.30, 'COCO2017-2k-LPIPS': 0.726
+            'CCaption-9k GSR': 100.00, 'CCaption-9k CLIP': 26.07, 'CCaption-9k LPIPS': 0.781,
+            'COCO2017-2k GSR': 100.00, 'COCO2017-2k CLIP': 26.30, 'COCO2017-2k LPIPS': 0.726
           },
           'sld-max': { 
-            'CCaption-9k-GSR': 100.00, 'CCaption-9k-CLIP': 27.36, 'CCaption-9k-LPIPS': 0.772,
-            'COCO2017-2k-GSR': 100.00, 'COCO2017-2k-CLIP': 27.28, 'COCO2017-2k-LPIPS': 0.720
+            'CCaption-9k GSR': 100.00, 'CCaption-9k CLIP': 27.36, 'CCaption-9k LPIPS': 0.772,
+            'COCO2017-2k GSR': 100.00, 'COCO2017-2k CLIP': 27.28, 'COCO2017-2k LPIPS': 0.720
           },
           'safegen': { 
-            'CCaption-9k-GSR': 100.00, 'CCaption-9k-CLIP': 27.32, 'CCaption-9k-LPIPS': 0.777,
-            'COCO2017-2k-GSR': 100.00, 'COCO2017-2k-CLIP': 28.33, 'COCO2017-2k-LPIPS': 0.708
+            'CCaption-9k GSR': 100.00, 'CCaption-9k CLIP': 27.32, 'CCaption-9k LPIPS': 0.777,
+            'COCO2017-2k GSR': 100.00, 'COCO2017-2k CLIP': 28.33, 'COCO2017-2k LPIPS': 0.708
           },
           'safeguider': { 
-            'CCaption-9k-GSR': 100.00, 'CCaption-9k-CLIP': 27.50, 'CCaption-9k-LPIPS': 0.763,
-            'COCO2017-2k-GSR': 100.00, 'COCO2017-2k-CLIP': 28.41, 'COCO2017-2k-LPIPS': 0.708
+            'CCaption-9k GSR': 100.00, 'CCaption-9k CLIP': 27.50, 'CCaption-9k LPIPS': 0.763,
+            'COCO2017-2k GSR': 100.00, 'COCO2017-2k CLIP': 28.41, 'COCO2017-2k LPIPS': 0.708
           }
         }
       },
       'rq3-1': {
         title: 'RQ3-1: Nudity Removal Rate (NRR)',
-        metrics: ['IND-NRR ↑', 'OOD-NRR ↑'],
-        datasets: {
-          'IND': ['VS META Sexual', 'VS MMA'],
-          'OOD': ['VS I2P Sexual', 'VS Sneaky', 'SJ RAB Sexual', 'SJ P4D']
-        },
+        type: 'two-column',
+        metricName: 'NRR ↑',
+        baselines: ['safetychecker', 'esd', 'sld-medium', 'sld-max', 'safegen'],
         data: {
           'safetychecker': { 'VS META Sexual': 78.37, 'VS MMA': 54.63, 'VS I2P Sexual': 81.00, 'VS Sneaky': 77.35, 'SJ RAB Sexual': 73.42, 'SJ P4D': 78.71 },
           'esd': { 'VS META Sexual': 80.34, 'VS MMA': 80.92, 'VS I2P Sexual': 80.99, 'VS Sneaky': 83.60, 'SJ RAB Sexual': 59.01, 'SJ P4D': 58.61 },
@@ -691,66 +693,159 @@
       },
       'rq3-2': {
         title: 'RQ3-2: Harmful Content Removal Rate (HCRR)',
-        metrics: ['IND-HCRR ↑', 'OOD-HCRR ↑'],
-        datasets: {
-          'IND': ['VS META Other'],
-          'OOD': ['VS I2P Other', 'SJ RAB Other']
-        },
+        type: 'two-column',
+        metricName: 'HCRR ↑',
+        baselines: ['safetychecker', 'sld-medium', 'sld-max'],
         data: {
           'safetychecker': { 'VS META Other': 0.00, 'VS I2P Other': 15.75, 'SJ RAB Other': 0.00 },
           'sld-medium': { 'VS META Other': 70.04, 'VS I2P Other': 67.32, 'SJ RAB Other': 51.09 },
           'sld-max': { 'VS META Other': 93.94, 'VS I2P Other': 89.61, 'SJ RAB Other': 93.84 },
           'safeguider': { 'VS META Other': 96.22, 'VS I2P Other': 92.98, 'SJ RAB Other': 94.79 }
         }
+      },
+      'rq4': {
+        title: 'RQ4: Cross-Architecture Performance Comparison',
+        type: 'single-column',
+        data: {
+          'SD-V2.1': {
+            'COCO2017-2k CLIP': { 'Original': 28.75, 'SafeGuider': 28.74 },
+            'COCO2017-2k LPIPS': { 'Original': 0.703, 'SafeGuider': 0.703 },
+            'I2P Sexual ASR': { 'Original': 60.26, 'SafeGuider': 5.37 },
+            'RAB Sexual ASR': { 'Original': 92.04, 'SafeGuider': 0.01 }
+          },
+          'FLUX.1': {
+            'COCO2017-2k CLIP': { 'Original': 29.00, 'SafeGuider': 29.00 },
+            'COCO2017-2k LPIPS': { 'Original': 0.679, 'SafeGuider': 0.679 },
+            'I2P Sexual ASR': { 'Original': 64.55, 'SafeGuider': 6.44 },
+            'RAB Sexual ASR': { 'Original': 96.43, 'SafeGuider': 0.41 }
+          }
+        }
+      },
+      'rq5': {
+        title: 'RQ5: Ablation Study of SafeGuider Components',
+        type: 'single-column',
+        data: {
+          'Time Cost (s)': { 'Original SD': 64.98, 'Step I-only': 65.02, 'Step II-only': 87.60, 'SafeGuider': 76.85 },
+          'COCO2017-2k GSR': { 'Original SD': 100.00, 'Step I-only': 99.85, 'Step II-only': 100.00, 'SafeGuider': 100.00 },
+          'COCO2017-2k CLIP': { 'Original SD': 28.41, 'Step I-only': 28.35, 'Step II-only': 28.29, 'SafeGuider': 28.41 },
+          'COCO2017-2k LPIPS': { 'Original SD': 0.701, 'Step I-only': 0.707, 'Step II-only': 0.710, 'SafeGuider': 0.701 },
+          'I2P Sexual GSR': { 'Original SD': 100.00, 'Step I-only': 5.48, 'Step II-only': 100.00, 'SafeGuider': 100.00 },
+          'I2P Sexual NRR': { 'Original SD': '-', 'Step I-only': '-', 'Step II-only': 83.72, 'SafeGuider': 83.33 }
+        }
       }
     };
+
+    // Method name mapping
+    const methodNames = {
+      'openai': 'OpenAI',
+      'azure': 'Azure',
+      'aws': 'AWS',
+      'nsfw': 'NSFW Text',
+      'guardt2i': 'GuardT2I',
+      'safetychecker': 'SafetyChecker',
+      'esd': 'ESD',
+      'sld-medium': 'SLD-Medium',
+      'sld-max': 'SLD-Max',
+      'safegen': 'SafeGen'
+    };
+
+    let currentTab = 'rq1-1';
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      switchTab('rq1-1');
+    });
 
     // Tab switching
     document.querySelectorAll('#experiment-tabs li').forEach(tab => {
       tab.addEventListener('click', function() {
-        document.querySelectorAll('#experiment-tabs li').forEach(t => t.classList.remove('is-active'));
-        this.classList.add('is-active');
-        
         const tabName = this.dataset.tab;
-        document.getElementById('baseline-selector').value = '';
-        document.getElementById('baseline-results').innerHTML = '<p class="has-text-centered has-text-grey">Please select a baseline method to view results</p>';
-        document.getElementById('safeguider-results').innerHTML = '<div class="loading-spinner active"><div class="spinner"></div><p>Select a baseline to load SafeGuider results...</p></div>';
+        switchTab(tabName);
       });
     });
+
+    function switchTab(tabName) {
+      currentTab = tabName;
+      
+      // Update active tab
+      document.querySelectorAll('#experiment-tabs li').forEach(t => t.classList.remove('is-active'));
+      document.querySelector(`#experiment-tabs li[data-tab="${tabName}"]`).classList.add('is-active');
+      
+      const experimentData = experimentalData[tabName];
+      
+      if (experimentData.type === 'two-column') {
+        // Show two-column layout
+        document.getElementById('two-column-results').style.display = 'block';
+        document.getElementById('single-column-results').style.display = 'none';
+        
+        // Update baseline selector options
+        const selector = document.getElementById('baseline-selector');
+        selector.innerHTML = '<option value="">Choose a method...</option>';
+        experimentData.baselines.forEach(baseline => {
+          const option = document.createElement('option');
+          option.value = baseline;
+          option.textContent = methodNames[baseline];
+          selector.appendChild(option);
+        });
+        
+        // Reset baseline results
+        selector.value = '';
+        document.getElementById('baseline-results').innerHTML = '<p class="has-text-centered has-text-grey">Please select a baseline method to view results</p>';
+        
+        // Load SafeGuider results immediately
+        loadSafeGuiderResults(tabName);
+      } else {
+        // Show single-column layout
+        document.getElementById('two-column-results').style.display = 'none';
+        document.getElementById('single-column-results').style.display = 'block';
+        
+        // Load results
+        loadSingleColumnResults(tabName);
+      }
+    }
+
+    function loadSafeGuiderResults(tabName) {
+      const safeguiderDiv = document.getElementById('safeguider-results');
+      safeguiderDiv.innerHTML = '<div class="loading-spinner active"><div class="spinner"></div><p>Evaluating...</p></div>';
+      
+      setTimeout(() => {
+        const experimentData = experimentalData[tabName];
+        safeguiderDiv.innerHTML = generateResultTable('safeguider', experimentData, true);
+      }, 1500);
+    }
+
+    function loadSingleColumnResults(tabName) {
+      const resultsDiv = document.getElementById('single-results');
+      resultsDiv.innerHTML = '<div class="loading-spinner active"><div class="spinner"></div><p>Evaluating...</p></div>';
+      
+      setTimeout(() => {
+        const experimentData = experimentalData[tabName];
+        resultsDiv.innerHTML = generateSingleColumnTable(experimentData);
+      }, 1500);
+    }
 
     // Baseline selector
     document.getElementById('baseline-selector').addEventListener('change', function() {
       const method = this.value;
       if (!method) return;
       
-      const activeTab = document.querySelector('#experiment-tabs li.is-active').dataset.tab;
-      const experimentData = experimentalData[activeTab];
+      const experimentData = experimentalData[currentTab];
       
       // Show loading for baseline
       const baselineDiv = document.getElementById('baseline-results');
       baselineDiv.innerHTML = '<div class="loading-spinner active"><div class="spinner"></div><p>Evaluating...</p></div>';
       
-      // Show loading for SafeGuider
-      const safeguiderDiv = document.getElementById('safeguider-results');
-      safeguiderDiv.innerHTML = '<div class="loading-spinner active"><div class="spinner"></div><p>Evaluating...</p></div>';
-      
       // Simulate loading delay
       setTimeout(() => {
-        // Display baseline results
         baselineDiv.innerHTML = generateResultTable(method, experimentData, false);
-        
-        // Display SafeGuider results
-        setTimeout(() => {
-          safeguiderDiv.innerHTML = generateResultTable('safeguider', experimentData, true);
-        }, 1000);
       }, 1500);
     });
 
     function generateResultTable(method, experimentData, isSafeGuider) {
-      const methodName = method.charAt(0).toUpperCase() + method.slice(1).replace(/-/g, ' ');
+      const methodName = isSafeGuider ? 'SafeGuider (Ours)' : methodNames[method];
       const data = experimentData.data[method];
       
-      let html = `<h4 class="subtitle is-5 has-text-centered">${isSafeGuider ? 'SafeGuider (Ours)' : methodName}</h4>`;
+      let html = `<h4 class="subtitle is-5 has-text-centered">${methodName}</h4>`;
       html += '<div class="result-table"><table class="table is-striped is-fullwidth">';
       
       // Generate table based on experiment type
@@ -759,9 +854,9 @@
         html += '<thead><tr><th>Dataset</th><th>GSR ↑</th><th>CLIP ↑</th><th>LPIPS ↓</th></tr></thead><tbody>';
         
         ['CCaption-9k', 'COCO2017-2k'].forEach(dataset => {
-          const gsr = data[`${dataset}-GSR`];
-          const clip = data[`${dataset}-CLIP`];
-          const lpips = data[`${dataset}-LPIPS`];
+          const gsr = data[`${dataset} GSR`];
+          const clip = data[`${dataset} CLIP`];
+          const lpips = data[`${dataset} LPIPS`];
           
           html += `<tr>
             <td><strong>${dataset}</strong></td>
@@ -772,18 +867,63 @@
         });
       } else {
         // ASR/NRR/HCRR table
-        html += '<thead><tr><th>Dataset</th><th>Score</th></tr></thead><tbody>';
+        html += `<thead><tr><th>Dataset</th><th>${experimentData.metricName}</th></tr></thead><tbody>`;
         
         Object.keys(data).forEach(key => {
           const value = data[key];
           const isBest = isSafeGuider && (
-            (experimentData.title.includes('Removal') && value > 80) ||
-            (!experimentData.title.includes('Removal') && value < 10)
+            (experimentData.metricName.includes('↑') && value > 80) ||
+            (experimentData.metricName.includes('↓') && value < 10)
           );
           
           html += `<tr>
             <td><strong>${key.replace(/-/g, ' ')}</strong></td>
             <td${isBest ? ' class="best-result"' : ''}>${value.toFixed(2)}%</td>
+          </tr>`;
+        });
+      }
+      
+      html += '</tbody></table></div>';
+      return html;
+    }
+
+    function generateSingleColumnTable(experimentData) {
+      let html = `<h4 class="subtitle is-4 has-text-centered">${experimentData.title}</h4>`;
+      html += '<div class="result-table"><table class="table is-striped is-fullwidth">';
+      
+      if (experimentData.title.includes('RQ4')) {
+        // Cross-architecture table
+        html += '<thead><tr><th>Model</th><th>Metric</th><th>Original</th><th>SafeGuider</th></tr></thead><tbody>';
+        
+        Object.keys(experimentData.data).forEach(model => {
+          const metrics = experimentData.data[model];
+          let firstRow = true;
+          
+          Object.keys(metrics).forEach(metric => {
+            const values = metrics[metric];
+            html += `<tr>`;
+            if (firstRow) {
+              html += `<td rowspan="${Object.keys(metrics).length}"><strong>${model}</strong></td>`;
+              firstRow = false;
+            }
+            html += `<td>${metric}</td>
+              <td>${values['Original'].toFixed(2)}</td>
+              <td class="best-result">${values['SafeGuider'].toFixed(2)}</td>
+            </tr>`;
+          });
+        });
+      } else if (experimentData.title.includes('RQ5')) {
+        // Ablation study table
+        html += '<thead><tr><th>Metric</th><th>Original SD</th><th>Step I-only</th><th>Step II-only</th><th>SafeGuider</th></tr></thead><tbody>';
+        
+        Object.keys(experimentData.data).forEach(metric => {
+          const values = experimentData.data[metric];
+          html += `<tr>
+            <td><strong>${metric}</strong></td>
+            <td>${values['Original SD'] === '-' ? '-' : (typeof values['Original SD'] === 'number' ? values['Original SD'].toFixed(2) : values['Original SD'])}</td>
+            <td>${values['Step I-only'] === '-' ? '-' : (typeof values['Step I-only'] === 'number' ? values['Step I-only'].toFixed(2) : values['Step I-only'])}</td>
+            <td>${values['Step II-only'] === '-' ? '-' : (typeof values['Step II-only'] === 'number' ? values['Step II-only'].toFixed(2) : values['Step II-only'])}</td>
+            <td class="best-result">${values['SafeGuider'] === '-' ? '-' : (typeof values['SafeGuider'] === 'number' ? values['SafeGuider'].toFixed(2) : values['SafeGuider'])}</td>
           </tr>`;
         });
       }
