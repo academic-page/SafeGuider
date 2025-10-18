@@ -1,487 +1,594 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SafeGuider: Robust and Practical Content Safety Control for Text-to-Image Models</title>
-    <link rel="stylesheet" href="static/css/bulma.min.css">
-    <link rel="stylesheet" href="static/css/index.css">
-    <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        .author-block {
-            display: inline-block;
-            margin: 0 15px;
-        }
-        .author-name {
-            font-size: 1.1rem;
-        }
-        .author-institution {
-            font-size: 0.9rem;
-            color: #666;
-        }
-        .equal-contribution {
-            font-size: 0.8rem;
-            color: #999;
-        }
-        .framework-section {
-            background-color: #f5f5f5;
-            padding: 3rem 0;
-            margin: 2rem 0;
-        }
-        .observation-box {
-            background-color: #e8f4f8;
-            border-left: 4px solid #3273dc;
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-        .two-column-layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            align-items: center;
-        }
-        .result-tabs {
-            margin: 2rem 0;
-        }
-        .tab-content {
-            display: none;
-            padding: 2rem 0;
-        }
-        .tab-content.is-active {
-            display: block;
-        }
-        .chart-container {
-            position: relative;
-            height: 400px;
-            margin: 2rem 0;
-        }
-        .links-section {
-            margin: 2rem 0;
-            text-align: center;
-        }
-        .link-button {
-            display: inline-block;
-            margin: 0 1rem;
-            padding: 0.75rem 1.5rem;
-            background-color: #3273dc;
-            color: white;
-            border-radius: 5px;
-            text-decoration: none;
-            transition: background-color 0.3s;
-        }
-        .link-button:hover {
-            background-color: #2366d1;
-            color: white;
-        }
-        .example-image {
-            width: 100%;
-            margin: 1rem 0;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <!-- Primary Meta Tags -->
+  <meta name="title" content="SafeGuider: Robust and Practical Content Safety Control for Text-to-Image Models">
+  <meta name="description" content="A two-step framework for robust safety control in text-to-image models without compromising generation quality">
+  <meta name="keywords" content="text-to-image, content safety, adversarial robustness, stable diffusion, AI safety">
+  <meta name="author" content="Peigui Qi, Kunsheng Tang, Wenbo Zhou, Weiming Zhang, Nenghai Yu, Tianwei Zhang, Qing Guo, Jie Zhang">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SafeGuider">
+  <meta property="og:title" content="SafeGuider: Robust and Practical Content Safety Control for Text-to-Image Models">
+  <meta property="og:description" content="A two-step framework for robust safety control in text-to-image models">
+  <meta property="og:url" content="https://github.com/pgqihere/safeguider">
+  <meta property="og:image" content="static/images/framework.png">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SafeGuider">
+  <meta name="twitter:description" content="Robust and Practical Content Safety Control for Text-to-Image Models">
+  <meta name="twitter:image" content="static/images/framework.png">
+
+  <title>SafeGuider: Robust and Practical Content Safety Control for Text-to-Image Models</title>
+  
+  <!-- Favicon and App Icons -->
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  <link rel="apple-touch-icon" href="static/images/favicon.ico">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+  <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- JavaScript -->
+  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script defer src="static/js/bulma-carousel.min.js"></script>
+  <script defer src="static/js/bulma-slider.min.js"></script>
+  <script defer src="static/js/index.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    .observation-box {
+      background-color: #f0f8ff;
+      border-left: 4px solid #2563eb;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+    .observation-title {
+      font-weight: bold;
+      color: #2563eb;
+      margin-bottom: 5px;
+    }
+    .two-column-layout {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+      margin: 30px 0;
+    }
+    .two-column-layout > div {
+      flex: 1;
+    }
+    .mmd-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    .mmd-table th, .mmd-table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    .mmd-table th {
+      background-color: #f4f4f4;
+      font-weight: bold;
+    }
+    .result-selector {
+      margin: 20px 0;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .result-btn {
+      padding: 10px 20px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .result-btn:hover {
+      background: #1d4ed8;
+    }
+    .result-btn.active {
+      background: #1e40af;
+    }
+    .example-gallery {
+      margin: 40px 0;
+    }
+    .example-image {
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+  </style>
 </head>
 <body>
-    <!-- Header Section -->
-    <section class="hero">
-        <div class="hero-body">
-            <div class="container has-text-centered">
-                <h1 class="title is-1">
-                    SafeGuider: Robust and Practical Content Safety Control for<br>Text-to-Image Models
-                </h1>
-                
-                <!-- Authors -->
-                <div class="authors" style="margin: 2rem 0;">
-                    <div class="author-block">
-                        <span class="author-name">Peigui Qi<sup>*</sup></span><br>
-                        <span class="author-institution">University of Science and Technology of China</span>
-                    </div>
-                    <div class="author-block">
-                        <span class="author-name">Kunsheng Tang</span><br>
-                        <span class="author-institution">University of Science and Technology of China</span>
-                    </div>
-                    <div class="author-block">
-                        <span class="author-name">Wenbo Zhou<sup>*</sup></span><br>
-                        <span class="author-institution">University of Science and Technology of China</span>
-                    </div>
-                    <div class="author-block">
-                        <span class="author-name">Weiming Zhang</span><br>
-                        <span class="author-institution">University of Science and Technology of China</span>
-                    </div>
-                    <div class="author-block">
-                        <span class="author-name">Nenghai Yu</span><br>
-                        <span class="author-institution">University of Science and Technology of China</span>
-                    </div>
-                    <div class="author-block">
-                        <span class="author-name">Tianwei Zhang</span><br>
-                        <span class="author-institution">Nanyang Technological University</span>
-                    </div>
-                    <div class="author-block">
-                        <span class="author-name">Qing Guo</span><br>
-                        <span class="author-institution">CFAR and IHPC, A*STAR</span>
-                    </div>
-                    <div class="author-block">
-                        <span class="author-name">Jie Zhang<sup>*</sup></span><br>
-                        <span class="author-institution">CFAR and IHPC, A*STAR</span>
-                    </div>
-                </div>
-                <p class="equal-contribution"><sup>*</sup> Indicates Equal Contribution</p>
-                
-                <!-- Links -->
-                <div class="links-section">
-                    <a href="#" class="link-button"><i class="fas fa-file-pdf"></i> Paper</a>
-                    <a href="https://github.com/pgqihere/safeguider" class="link-button"><i class="fab fa-github"></i> Code</a>
-                    <a href="#" class="link-button"><i class="fas fa-archive"></i> arXiv</a>
-                    <a href="#" class="link-button"><i class="fas fa-database"></i> Dataset</a>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- Framework Section -->
-    <section class="framework-section">
-        <div class="container">
-            <h2 class="title is-3 has-text-centered">Overview</h2>
-            <figure class="image">
-                <img src="static/images/framework.png" alt="SafeGuider Framework">
-            </figure>
-            <div class="content" style="margin-top: 2rem;">
-                <p class="has-text-justified">
-                    <strong>Overview of SafeGuider.</strong> In Step I, SafeGuider processes input prompts through a text encoder to obtain [EOS] token embeddings for safety assessment. Prompts with safety scores > 0.5 are considered safe and directly forwarded to image generation, while unsafe ones (safety scores ≤ 0.5) are processed by Step II. In Step II, SAFE beam search with beam width K strategically modifies unsafe prompts to obtain safe yet semantically meaningful embeddings for image generation.
-                </p>
-            </div>
-        </div>
-    </section>
+  <!-- Scroll to Top Button -->
+  <button class="scroll-to-top" onclick="scrollToTop()" title="Scroll to top" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
 
-    <!-- Abstract Section -->
-    <section class="section">
-        <div class="container">
-            <h2 class="title is-3 has-text-centered">Abstract</h2>
-            <div class="content">
-                <p class="has-text-justified">
-                    Text-to-image models have shown remarkable capabilities in generating high-quality images from natural language descriptions. However, these models are highly vulnerable to adversarial prompts, which can bypass safety measures and produce harmful content. Despite various defensive strategies, achieving robustness against attacks while maintaining practical utility in real-world applications remains a significant challenge.
-                </p>
-                <p class="has-text-justified">
-                    To address this issue, we first conduct an empirical study of the text encoder in the Stable Diffusion (SD) model, which is a widely used and representative text-to-image model. Our findings reveal that the [EOS] token acts as a semantic aggregator, exhibiting distinct distributional patterns between benign and adversarial prompts in its embedding space. Building on this insight, we introduce <strong>SafeGuider</strong>, a two-step framework designed for robust safety control without compromising generation quality. <strong>SafeGuider</strong> combines an embedding-level recognition model with a safety-aware feature erasure beam search algorithm. This integration enables the framework to maintain high-quality image generation for benign prompts while ensuring robust defense against both in-domain and out-of-domain attacks.
-                </p>
-                <p class="has-text-justified">
-                    <strong>SafeGuider</strong> demonstrates exceptional effectiveness in minimizing attack success rates, achieving a maximum rate of only 5.48% across various attack scenarios. Moreover, instead of refusing to generate or producing black images for unsafe prompts, <strong>SafeGuider</strong> generates safe and meaningful images, enhancing its practical utility. In addition, <strong>SafeGuider</strong> is not limited to the SD model and can be effectively applied to other text-to-image models, such as the Flux model, demonstrating its versatility and adaptability across different architectures.
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Empirical Study Section -->
-    <section class="section" style="background-color: #fafafa;">
-        <div class="container">
-            <h2 class="title is-3 has-text-centered">Empirical Study</h2>
+  <main id="main-content">
+  <!-- Title and Authors Section -->
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">SafeGuider: Robust and Practical Content Safety Control for<br>Text-to-Image Models</h1>
             
-            <!-- First Experiment -->
-            <div class="content">
-                <h3 class="title is-4">Token Aggregation Analysis</h3>
-                <figure class="image">
-                    <img src="static/images/Sec4.1_EOS.png" alt="EOS Token Analysis">
-                </figure>
-                <div class="observation-box">
-                    <strong>Observation 1:</strong> The [EOS] token serves as a text condition feature aggregator in CLIP's text encoder.
-                </div>
-                <div class="observation-box">
-                    <strong>Observation 2:</strong> The condition feature aggregation process follows a hierarchical pattern from shallow to deep layers.
-                </div>
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">Peigui Qi<sup>1</sup>,</span>
+              <span class="author-block">Kunsheng Tang<sup>1</sup>,</span>
+              <span class="author-block">Wenbo Zhou<sup>1*</sup>,</span>
+              <span class="author-block">Weiming Zhang<sup>1</sup>,</span>
+              <span class="author-block">Nenghai Yu<sup>1</sup>,</span>
+              <span class="author-block">Tianwei Zhang<sup>2</sup>,</span>
+              <span class="author-block">Qing Guo<sup>3</sup>,</span>
+              <span class="author-block">Jie Zhang<sup>3*</sup></span>
             </div>
 
-            <!-- Second Experiment -->
-            <div class="content" style="margin-top: 3rem;">
-                <h3 class="title is-4">Embedding Space Distribution</h3>
-                <div class="two-column-layout">
-                    <figure class="image">
-                        <img src="static/images/Visualization.png" alt="Embedding Visualization">
-                    </figure>
-                    <figure class="image">
-                        <img src="static/images/MMD.png" alt="MMD Scores">
-                    </figure>
-                </div>
-                <div class="observation-box">
-                    <strong>Observation 3:</strong> Prompts within the same category exhibit clear clustering patterns in [EOS] token embedding space.
-                </div>
-                <div class="observation-box">
-                    <strong>Observation 4:</strong> Prompts across different categories demonstrate significant distributional gaps in [EOS] token embedding space.
-                </div>
+            <div class="is-size-5 publication-authors">
+              <span class="author-block"><sup>1</sup>University of Science and Technology of China, Hefei, China</span><br>
+              <span class="author-block"><sup>2</sup>Nanyang Technological University, Singapore</span><br>
+              <span class="author-block"><sup>3</sup>CFAR and IHPC, A*STAR, Singapore</span><br>
+              <span class="eql-cntrb"><small><sup>*</sup>Indicates Equal Contribution</small></span>
             </div>
 
-            <!-- Third Experiment -->
-            <div class="content" style="margin-top: 3rem;">
-                <h3 class="title is-4">Generalization Across Architectures</h3>
-                <p class="has-text-justified">
-                    We extend our analysis to T2I models with different architectures and text encoders, including SD-V2.1 with OpenCLIP ViT-H/14 and Flux.1 with both CLIP ViT-L/14 and T5-XXL encoders.
-                </p>
-                <div class="observation-box">
-                    <strong>Observation 5:</strong> The discovered aggregation token patterns generalize across different text encoders and model architectures.
-                </div>
-            </div>
+            <div class="column has-text-centered">
+              <div class="publication-links">
+                <span class="link-block">
+                  <a href="https://github.com/pgqihere/safeguider/paper.pdf" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+
+              <span class="link-block">
+                <a href="https://github.com/pgqihere/safeguider" target="_blank"
+                class="external-link button is-normal is-rounded is-dark">
+                <span class="icon">
+                  <i class="fab fa-github"></i>
+                </span>
+                <span>Code</span>
+              </a>
+            </span>
+
+            <span class="link-block">
+              <a href="https://arxiv.org/abs/safeguider" target="_blank"
+              class="external-link button is-normal is-rounded is-dark">
+              <span class="icon">
+                <i class="ai ai-arxiv"></i>
+              </span>
+              <span>arXiv</span>
+            </a>
+          </span>
+
+          <span class="link-block">
+            <a href="#" target="_blank"
+            class="external-link button is-normal is-rounded is-dark">
+            <span class="icon">
+              <i class="fas fa-database"></i>
+            </span>
+            <span>Dataset</span>
+          </a>
+        </span>
         </div>
-    </section>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</section>
 
-    <!-- Experimental Results Section -->
-    <section class="section">
-        <div class="container">
-            <h2 class="title is-3 has-text-centered">Experimental Results</h2>
-            
-            <!-- Tabs for different experiments -->
-            <div class="tabs is-centered is-boxed">
-                <ul>
-                    <li class="is-active"><a onclick="showTab('defense')">Defense Performance</a></li>
-                    <li><a onclick="showTab('quality')">Generation Quality</a></li>
-                    <li><a onclick="showTab('mitigation')">Content Mitigation</a></li>
-                    <li><a onclick="showTab('adaptive')">Adaptive Attacks</a></li>
-                </ul>
-            </div>
-
-            <!-- Tab Contents -->
-            <div id="defense" class="tab-content is-active">
-                <h3 class="title is-4 has-text-centered">Defense Performance Comparison</h3>
-                <div class="chart-container">
-                    <canvas id="defenseChart"></canvas>
-                </div>
-            </div>
-
-            <div id="quality" class="tab-content">
-                <h3 class="title is-4 has-text-centered">Generation Quality Metrics</h3>
-                <div class="chart-container">
-                    <canvas id="qualityChart"></canvas>
-                </div>
-            </div>
-
-            <div id="mitigation" class="tab-content">
-                <h3 class="title is-4 has-text-centered">Content Mitigation Effectiveness</h3>
-                <div class="chart-container">
-                    <canvas id="mitigationChart"></canvas>
-                </div>
-            </div>
-
-            <div id="adaptive" class="tab-content">
-                <h3 class="title is-4 has-text-centered">Robustness Against Adaptive Attacks</h3>
-                <figure class="image">
-                    <img src="static/images/adaptive_attack.png" alt="Adaptive Attack Results">
-                </figure>
-            </div>
+<!-- Framework Overview Section -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full">
+        <h2 class="title is-3 has-text-centered">Framework Overview</h2>
+        <div class="content">
+          <img src="static/images/framework.png" alt="SafeGuider Framework" class="example-image">
+          <p class="has-text-justified" style="margin-top: 20px;">
+            <strong>Overview of SafeGuider.</strong> In Step I, SafeGuider processes input prompts through a text encoder to obtain [EOS] token embeddings for safety assessment. Prompts with safety scores > 0.5 are considered safe and directly forwarded to image generation, while unsafe ones (safety scores ≤ 0.5) are processed by Step II. In Step II, SAFE beam search with beam width K strategically modifies unsafe prompts to obtain safe yet semantically meaningful embeddings for image generation.
+          </p>
         </div>
-    </section>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- Visual Examples Section -->
-    <section class="section" style="background-color: #fafafa;">
-        <div class="container">
-            <h2 class="title is-3 has-text-centered">Visual Examples</h2>
-            
-            <div class="content">
-                <h3 class="title is-4">Comparison of Sexually Explicit Content Mitigation</h3>
-                <img src="static/images/sexual_examples.png" alt="Sexual Content Mitigation" class="example-image">
-            </div>
-
-            <div class="content">
-                <h3 class="title is-4">Comparison of Other Unsafe Content Mitigation</h3>
-                <img src="static/images/harmful_examples.png" alt="Harmful Content Mitigation" class="example-image">
-            </div>
-
-            <div class="content">
-                <h3 class="title is-4">Comparison of Generation Quality on Benign Prompts</h3>
-                <img src="static/images/benign_examples.png" alt="Benign Generation Quality" class="example-image">
-            </div>
-
-            <div class="content">
-                <h3 class="title is-4">Performance Across Different T2I Architectures</h3>
-                <img src="static/images/transfer_examples.png" alt="Cross-Architecture Performance" class="example-image">
-            </div>
+<!-- Abstract Section -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Text-to-image models have shown remarkable capabilities in generating high-quality images from natural language descriptions. However, these models are highly vulnerable to adversarial prompts, which can bypass safety measures and produce harmful content. Despite various defensive strategies, achieving robustness against attacks while maintaining practical utility in real-world applications remains a significant challenge.
+          </p>
+          <p>
+            To address this issue, we first conduct an empirical study of the text encoder in the Stable Diffusion (SD) model, which is a widely used and representative text-to-image model. Our findings reveal that the [EOS] token acts as a semantic aggregator, exhibiting distinct distributional patterns between benign and adversarial prompts in its embedding space. Building on this insight, we introduce <strong>SafeGuider</strong>, a two-step framework designed for robust safety control without compromising generation quality.
+          </p>
+          <p>
+            <strong>SafeGuider</strong> combines an embedding-level recognition model with a safety-aware feature erasure beam search algorithm. This integration enables the framework to maintain high-quality image generation for benign prompts while ensuring robust defense against both in-domain and out-of-domain attacks. <strong>SafeGuider</strong> demonstrates exceptional effectiveness in minimizing attack success rates, achieving a maximum rate of only 5.48% across various attack scenarios. Moreover, instead of refusing to generate or producing black images for unsafe prompts, <strong>SafeGuider</strong> generates safe and meaningful images, enhancing its practical utility.
+          </p>
+          <p>
+            In addition, <strong>SafeGuider</strong> is not limited to the SD model and can be effectively applied to other text-to-image models, such as the Flux model, demonstrating its versatility and adaptability across different architectures. More details are available at <a href="https://github.com/pgqihere/safeguider" target="_blank">https://github.com/pgqihere/safeguider</a>.
+          </p>
         </div>
-    </section>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="content has-text-centered">
-                <p>
-                    © 2025 SafeGuider. All rights reserved.
-                </p>
-            </div>
+<!-- Empirical Study Section -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Empirical Study</h2>
+    
+    <!-- EOS Token Analysis -->
+    <div class="content">
+      <h3 class="title is-4">EOS Token as Semantic Aggregator</h3>
+      <img src="static/images/Sec4.1_EOS.png" alt="EOS Token Analysis" class="example-image">
+      
+      <div class="observation-box">
+        <div class="observation-title">Observation 1:</div>
+        The [EOS] token serves as a text condition feature aggregator in CLIP's text encoder.
+      </div>
+      
+      <div class="observation-box">
+        <div class="observation-title">Observation 2:</div>
+        The condition feature aggregation process follows a hierarchical pattern from shallow to deep layers.
+      </div>
+    </div>
+
+    <!-- Visualization and MMD Analysis -->
+    <div class="content">
+      <h3 class="title is-4">Embedding Space Analysis</h3>
+      <div class="two-column-layout">
+        <div>
+          <img src="static/images/Visualization.png" alt="Visualization" class="example-image">
         </div>
-    </footer>
+        <div>
+          <table class="mmd-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Benign</th>
+                <th>VS Attacks</th>
+                <th>SJ Attacks</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>Benign</th>
+                <td>0</td>
+                <td>0.496</td>
+                <td>0.993</td>
+              </tr>
+              <tr>
+                <th>VS Attacks</th>
+                <td>0.496</td>
+                <td>0</td>
+                <td>1.000</td>
+              </tr>
+              <tr>
+                <th>SJ Attacks</th>
+                <td>0.993</td>
+                <td>1.000</td>
+                <td>0</td>
+              </tr>
+            </tbody>
+          </table>
+          <p style="text-align: center; margin-top: 10px;"><strong>Maximum Mean Discrepancy (MMD) scores</strong><br>Higher scores indicate greater distributional differences.</p>
+        </div>
+      </div>
+      
+      <div class="observation-box">
+        <div class="observation-title">Observation 3:</div>
+        Prompts within the same category exhibit clear clustering patterns in [EOS] token embedding space.
+      </div>
+      
+      <div class="observation-box">
+        <div class="observation-title">Observation 4:</div>
+        Prompts across different categories demonstrate significant distributional gaps in [EOS] token embedding space.
+      </div>
+    </div>
 
-    <!-- JavaScript -->
-    <script>
-        // Tab switching function
-        function showTab(tabName) {
-            // Hide all tab contents
-            const tabContents = document.querySelectorAll('.tab-content');
-            tabContents.forEach(tab => {
-                tab.classList.remove('is-active');
-            });
-            
-            // Remove active class from all tabs
-            const tabs = document.querySelectorAll('.tabs li');
-            tabs.forEach(tab => {
-                tab.classList.remove('is-active');
-            });
-            
-            // Show selected tab content
-            document.getElementById(tabName).classList.add('is-active');
-            
-            // Add active class to selected tab
-            event.target.parentElement.classList.add('is-active');
+    <!-- Generalization Analysis -->
+    <div class="content">
+      <h3 class="title is-4">Generalization Across Models</h3>
+      <p>We extend our analysis to T2I models with different architectures and text encoders, including SD-V2.1 with OpenCLIP ViT-H/14 and Flux.1 with both CLIP ViT-L/14 and T5-XXL encoders.</p>
+      
+      <div class="observation-box">
+        <div class="observation-title">Observation 5:</div>
+        The discovered aggregation token patterns generalize across different text encoders and model architectures.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Results Section -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Experimental Results</h2>
+    
+    <div class="result-selector">
+      <button class="result-btn active" onclick="showResult('detection')">Detection Performance</button>
+      <button class="result-btn" onclick="showResult('generation')">Generation Quality</button>
+      <button class="result-btn" onclick="showResult('mitigation')">Content Mitigation</button>
+      <button class="result-btn" onclick="showResult('adaptive')">Adaptive Attack</button>
+    </div>
+
+    <div id="result-content">
+      <!-- Charts will be inserted here dynamically -->
+      <canvas id="resultChart" style="max-height: 400px;"></canvas>
+    </div>
+
+    <!-- Adaptive Attack Results -->
+    <div id="adaptive-attack" style="display: none; margin-top: 30px;">
+      <img src="static/images/adaptive_attack.png" alt="Adaptive Attack Results" class="example-image">
+      <p class="has-text-centered" style="margin-top: 15px;">
+        <strong>Adaptive Attack Performance:</strong> SafeGuider maintains robust defense even against adaptive attacks designed specifically to bypass our defense mechanism.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Example Galleries Section -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Visual Examples</h2>
+    
+    <!-- Sexual Content Mitigation -->
+    <div class="example-gallery">
+      <h3 class="title is-4">Comparison of Sexually Explicit Content Mitigation</h3>
+      <img src="static/images/sexual_examples.png" alt="Sexual Content Mitigation" class="example-image">
+    </div>
+
+    <!-- Other Unsafe Content -->
+    <div class="example-gallery">
+      <h3 class="title is-4">Comparison of Other Unsafe Content Mitigation</h3>
+      <img src="static/images/harmful_examples.png" alt="Harmful Content Mitigation" class="example-image">
+    </div>
+
+    <!-- Benign Prompts -->
+    <div class="example-gallery">
+      <h3 class="title is-4">Comparison of Generation Quality on Benign Prompts</h3>
+      <img src="static/images/benign_examples.png" alt="Benign Examples" class="example-image">
+    </div>
+
+    <!-- Cross-Architecture Evaluation -->
+    <div class="example-gallery">
+      <h3 class="title is-4">Cross-Architecture Performance (SD-V2.1 and Flux.1)</h3>
+      <img src="static/images/transfer_examples.png" alt="Transfer Examples" class="example-image">
+    </div>
+  </div>
+</section>
+
+<!-- BibTeX Citation -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <div class="bibtex-header">
+      <h2 class="title">BibTeX</h2>
+      <button class="copy-bibtex-btn" onclick="copyBibTeX()" title="Copy BibTeX to clipboard">
+        <i class="fas fa-copy"></i>
+        <span class="copy-text">Copy</span>
+      </button>
+    </div>
+    <pre id="bibtex-code"><code>@inproceedings{qi2025safeguider,
+  title={SafeGuider: Robust and Practical Content Safety Control for Text-to-Image Models},
+  author={Peigui Qi and Kunsheng Tang and Wenbo Zhou and Weiming Zhang and Nenghai Yu and Tianwei Zhang and Qing Guo and Jie Zhang},
+  booktitle={Proceedings of the 2025 on {ACM} {SIGSAC} Conference on Computer and Communications Security, {CCS} 2025, Taipei, October 13-17, 2025},
+  publisher={{ACM}},
+  year={2025},
+  url={https://doi.org/10.1145/3719027.3744835},
+  doi={10.1145/3719027.3744835}
+}</code></pre>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>.
+            This website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Chart.js visualization for results
+let currentChart = null;
+
+function showResult(type) {
+  // Update active button
+  document.querySelectorAll('.result-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  // Hide adaptive attack image by default
+  document.getElementById('adaptive-attack').style.display = 'none';
+  
+  // Destroy existing chart if it exists
+  if (currentChart) {
+    currentChart.destroy();
+  }
+  
+  const ctx = document.getElementById('resultChart').getContext('2d');
+  
+  if (type === 'detection') {
+    currentChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['OpenAI', 'Azure', 'AWS', 'NSFW Text', 'GuardT2I', 'SafetyChecker', 'ESD', 'SLD-Medium', 'SLD-Max', 'SafeGen', 'SafeGuider'],
+        datasets: [{
+          label: 'VS Attack ASR (%)',
+          data: [96.87, 83.02, 86.00, 37.88, 26.33, 64.50, 21.38, 32.76, 16.04, 13.99, 2.05],
+          backgroundColor: 'rgba(255, 99, 132, 0.5)',
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 1
+        }, {
+          label: 'SJ Attack ASR (%)',
+          data: [30.34, 15.45, 13.00, 3.37, 17.70, 53.09, 51.12, 90.73, 84.83, 19.10, 1.12],
+          backgroundColor: 'rgba(54, 162, 235, 0.5)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Attack Success Rate (ASR) - Lower is Better'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100
+          }
         }
+      }
+    });
+  } else if (type === 'generation') {
+    currentChart = new Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels: ['Generation Success Rate', 'CLIP Score', 'LPIPS Score (inverted)'],
+        datasets: [{
+          label: 'Original SD',
+          data: [100, 27.52/30*100, (1-0.762)*100],
+          borderColor: 'rgb(75, 192, 192)',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)'
+        }, {
+          label: 'SafeGuider',
+          data: [100, 27.50/30*100, (1-0.763)*100],
+          borderColor: 'rgb(255, 99, 132)',
+          backgroundColor: 'rgba(255, 99, 132, 0.2)'
+        }, {
+          label: 'GuardT2I',
+          data: [27.17, 21.55/30*100, (1-0.887)*100],
+          borderColor: 'rgb(54, 162, 235)',
+          backgroundColor: 'rgba(54, 162, 235, 0.2)'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Generation Quality Metrics'
+          }
+        },
+        scales: {
+          r: {
+            beginAtZero: true,
+            max: 100
+          }
+        }
+      }
+    });
+  } else if (type === 'mitigation') {
+    currentChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['SafetyChecker', 'ESD', 'SLD-Medium', 'SLD-Max', 'SafeGen', 'SafeGuider'],
+        datasets: [{
+          label: 'Nudity Removal Rate (%)',
+          data: [78.37, 80.34, 73.43, 76.10, 79.03, 86.61],
+          backgroundColor: 'rgba(153, 102, 255, 0.5)',
+          borderColor: 'rgba(153, 102, 255, 1)',
+          borderWidth: 1
+        }, {
+          label: 'Harmful Content Removal Rate (%)',
+          data: [15.75, 0, 67.32, 89.61, 0, 92.98],
+          backgroundColor: 'rgba(255, 159, 64, 0.5)',
+          borderColor: 'rgba(255, 159, 64, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Content Mitigation Performance - Higher is Better'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100
+          }
+        }
+      }
+    });
+  } else if (type === 'adaptive') {
+    // Show adaptive attack image
+    document.getElementById('adaptive-attack').style.display = 'block';
+    // Hide the chart canvas
+    document.getElementById('resultChart').style.display = 'none';
+    return;
+  }
+  
+  // Show chart canvas if it was hidden
+  document.getElementById('resultChart').style.display = 'block';
+}
 
-        // Chart configurations based on experimental results
-        // Defense Performance Chart
-        const defenseCtx = document.getElementById('defenseChart').getContext('2d');
-        new Chart(defenseCtx, {
-            type: 'bar',
-            data: {
-                labels: ['SafeGuider', 'SLD-Max', 'SafeGen', 'ESD', 'GuardT2I', 'NSFW Text', 'AWS', 'Azure', 'OpenAI'],
-                datasets: [
-                    {
-                        label: 'VS META Sexual ASR (%)',
-                        data: [2.05, 16.04, 13.99, 21.38, 26.33, 37.88, 86.00, 83.02, 96.87],
-                        backgroundColor: 'rgba(255, 99, 132, 0.6)'
-                    },
-                    {
-                        label: 'SJ MMA ASR (%)',
-                        data: [1.12, 84.83, 19.10, 51.12, 17.70, 3.37, 13.00, 15.45, 30.34],
-                        backgroundColor: 'rgba(54, 162, 235, 0.6)'
-                    },
-                    {
-                        label: 'VS I2P Sexual ASR (%)',
-                        data: [5.48, 49.19, 54.14, 32.44, 25.46, 25.00, 85.00, 82.00, 91.00],
-                        backgroundColor: 'rgba(75, 192, 192, 0.6)'
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 100,
-                        title: {
-                            display: true,
-                            text: 'Attack Success Rate (%)'
-                        }
-                    }
-                },
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Defense Performance Against Various Attacks'
-                    },
-                    legend: {
-                        position: 'top'
-                    }
-                }
-            }
-        });
+// Copy BibTeX function
+function copyBibTeX() {
+  const bibtexCode = document.getElementById('bibtex-code').innerText;
+  navigator.clipboard.writeText(bibtexCode).then(() => {
+    const copyBtn = document.querySelector('.copy-bibtex-btn .copy-text');
+    copyBtn.textContent = 'Copied!';
+    setTimeout(() => {
+      copyBtn.textContent = 'Copy';
+    }, 2000);
+  });
+}
 
-        // Generation Quality Chart
-        const qualityCtx = document.getElementById('qualityChart').getContext('2d');
-        new Chart(qualityCtx, {
-            type: 'radar',
-            data: {
-                labels: ['Generation Success Rate', 'CLIP Score', 'LPIPS Score (inverse)'],
-                datasets: [
-                    {
-                        label: 'SafeGuider',
-                        data: [100, 27.50, (1 - 0.763) * 100],
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)'
-                    },
-                    {
-                        label: 'Original SD',
-                        data: [100, 27.52, (1 - 0.762) * 100],
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)'
-                    },
-                    {
-                        label: 'GuardT2I',
-                        data: [27.17, 21.55, (1 - 0.887) * 100],
-                        borderColor: 'rgba(255, 206, 86, 1)',
-                        backgroundColor: 'rgba(255, 206, 86, 0.2)'
-                    },
-                    {
-                        label: 'NSFW Text',
-                        data: [70.60, 25.32, (1 - 0.803) * 100],
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)'
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    r: {
-                        beginAtZero: true,
-                        max: 100
-                    }
-                },
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Generation Quality Comparison'
-                    }
-                }
-            }
-        });
+// Scroll to top function
+function scrollToTop() {
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
 
-        // Mitigation Effectiveness Chart
-        const mitigationCtx = document.getElementById('mitigationChart').getContext('2d');
-        new Chart(mitigationCtx, {
-            type: 'line',
-            data: {
-                labels: ['VS META Sexual', 'SJ MMA', 'VS I2P Sexual', 'VS Sneaky', 'SJ RAB Sexual', 'SJ P4D'],
-                datasets: [
-                    {
-                        label: 'SafeGuider NRR (%)',
-                        data: [86.61, 93.32, 83.33, 88.52, 81.71, 82.57],
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                        fill: true
-                    },
-                    {
-                        label: 'SafeGen NRR (%)',
-                        data: [79.03, 92.31, 58.58, 85.62, 76.81, 73.27],
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        fill: true
-                    },
-                    {
-                        label: 'ESD NRR (%)',
-                        data: [80.34, 80.92, 80.99, 83.60, 59.01, 58.61],
-                        borderColor: 'rgba(255, 206, 86, 1)',
-                        backgroundColor: 'rgba(255, 206, 86, 0.2)',
-                        fill: true
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 100,
-                        title: {
-                            display: true,
-                            text: 'Nudity Removal Rate (%)'
-                        }
-                    }
-                },
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Content Mitigation Effectiveness'
-                    }
-                }
-            }
-        });
-    </script>
+// Initialize with detection results
+window.addEventListener('load', () => {
+  showResult('detection');
+});
+</script>
+
 </body>
 </html>
